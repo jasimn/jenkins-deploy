@@ -8,15 +8,14 @@ pipeline {
 
     stages {
 
-        stage('Fetch Code from Git') {
+        stage('Checkout Code') {
             steps {
-                echo "Code fetched from GitHub"
+                checkout scm
             }
         }
 
         stage('Build Application') {
             steps {
-                echo "Installing Node.js dependencies"
                 sh '''
                   cd node-app
                   npm install
@@ -26,7 +25,6 @@ pipeline {
 
         stage('Deploy Application') {
             steps {
-                echo "Deploying application"
                 sh '''
                   rm -rf $APP_DIR/*
                   cp -r node-app/* $APP_DIR/
@@ -36,27 +34,12 @@ pipeline {
 
         stage('Restart Application') {
             steps {
-                echo "Restarting Node.js application"
                 sh '''
-                  # Stop old app if running
-                  pkill -f server.js || true
-
-                  # Start new app with updated code
+                  sudo pkill -9 node || true
                   nohup node /opt/node-app/server.js > /opt/node-app/app.log 2>&1 &
-
-                  # Give app time to start
                   sleep 5
                 '''
             }
-        }
-    }
-
-    post {
-        success {
-            echo "✅ Application deployed and restarted successfully"
-        }
-        failure {
-            echo "❌ Pipeline failed"
         }
     }
 }
