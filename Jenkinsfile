@@ -34,16 +34,18 @@ pipeline {
             }
         }
 
-        stage('Start Application') {
+        stage('Restart Application') {
             steps {
-                echo "Starting Node.js application"
+                echo "Restarting Node.js application"
                 sh '''
-                  PID=$(lsof -t -i:$APP_PORT || true)
-                  if [ -n "$PID" ]; then
-                    kill -9 $PID
-                  fi
+                  # Stop old app if running
+                  pkill -f server.js || true
 
-                  nohup node $APP_DIR/server.js > $APP_DIR/app.log 2>&1 &
+                  # Start new app with updated code
+                  nohup node /opt/node-app/server.js > /opt/node-app/app.log 2>&1 &
+
+                  # Give app time to start
+                  sleep 5
                 '''
             }
         }
@@ -51,10 +53,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Pipeline executed successfully"
+            echo "✅ Application deployed and restarted successfully"
         }
         failure {
-            echo "❌ Pipeline execution failed"
+            echo "❌ Pipeline failed"
         }
     }
 }
