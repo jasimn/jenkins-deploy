@@ -2,8 +2,7 @@ pipeline {
     agent any
 
     environment {
-        APP_DIR  = "/opt/node-app"
-        APP_PORT = "3000"
+        APP_DIR = "/opt/node-app"
     }
 
     stages {
@@ -18,7 +17,7 @@ pipeline {
             steps {
                 sh '''
                   cd node-app
-                  npm install
+                  npm install --production
                 '''
             }
         }
@@ -32,14 +31,22 @@ pipeline {
             }
         }
 
-        stage('Restart Application') {
+        stage('Restart Service') {
             steps {
                 sh '''
-                  sudo pkill -9 node || true
-                  nohup node /opt/node-app/server.js > /opt/node-app/app.log 2>&1 &
-                  sleep 5
+                  sudo systemctl restart node-app
+                  sudo systemctl status node-app --no-pager
                 '''
             }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Application deployed via systemd (production-ready)"
+        }
+        failure {
+            echo "❌ Deployment failed"
         }
     }
 }
