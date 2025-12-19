@@ -10,24 +10,26 @@ pipeline {
 
         stage('Fetch Code from Git') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/jasimn/jenkins-deploy.git'
+                echo "Code fetched from GitHub"
             }
         }
 
         stage('Build Application') {
             steps {
                 echo "Installing Node.js dependencies"
-                sh 'npm install'
+                sh '''
+                  cd node-app
+                  npm install
+                '''
             }
         }
 
         stage('Deploy Application') {
             steps {
-                echo "Deploying application to server"
+                echo "Deploying application"
                 sh '''
                   rm -rf $APP_DIR/*
-                  cp -r . $APP_DIR/
+                  cp -r node-app/* $APP_DIR/
                 '''
             }
         }
@@ -36,7 +38,7 @@ pipeline {
             steps {
                 echo "Starting Node.js application"
                 sh '''
-                  PID=$(lsof -t -i:$APP_PORT) || true
+                  PID=$(lsof -t -i:$APP_PORT || true)
                   if [ -n "$PID" ]; then
                     kill -9 $PID
                   fi
