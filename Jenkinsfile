@@ -34,8 +34,7 @@ pipeline {
         stage('Restart Service') {
             steps {
                 sh '''
-                  sudo systemctl restart node-app
-                  sudo systemctl status node-app --no-pager
+                   sudo /usr/bin/systemctl restart node-app
                 '''
             }
         }
