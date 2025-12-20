@@ -65,7 +65,7 @@ sudo dnf update -y
 ```
 Install Java:
 ```bash
-sudo yum install java-11-amazon-corretto -y
+sudo dnf install java-17-amazon-corretto -y
 ```
 ## 3.2 Install Jenkins
 Verify:
