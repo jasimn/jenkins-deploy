@@ -26,7 +26,7 @@ Jenkins Pipeline
    |  Checkout → Build → Deploy → Restart
    v
 Application Server (EC2)
-
+```
 ## 2. Prerequisites
 
 ### Server Requirements
@@ -88,3 +88,29 @@ Unlock Jenkins:
 ```bash
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 ```
+## 4. Install Required Jenkins Plugins
+
+Go to:
+
+**Manage Jenkins → Plugins**
+
+Install the following plugins:
+
+- **Git**
+- **GitHub**
+- **Pipeline**
+- **Pipeline: SCM Step**
+- **NodeJS** *(optional)*
+
+After installing the plugins, **restart Jenkins**.
+
+---
+
+## 5. Application Code (Example)
+
+### Project Structure
+jenkins-deploy/
+├── Jenkinsfile
+└── node-app/
+    ├── server.js
+    └── package.jso
