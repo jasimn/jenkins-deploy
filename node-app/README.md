@@ -61,6 +61,7 @@ Jenkins requires Java to run. Install Java 11 or higher.
 #### Amazon Linux / RHEL
 
 ```bash
+sudo yum update
 sudo yum install java-11-amazon-corretto -y
 ```
 ## 3.2 Install Jenkins
