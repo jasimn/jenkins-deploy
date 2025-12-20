@@ -238,11 +238,10 @@ pipeline {
 Jenkins cannot enter sudo passwords.
 ```bash
 sudo visudo
-``
-Add:
-text
 ```
-jenkins ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart node-app
+Add:
+
+```jenkins ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart node-app
 ```
 10. Create Jenkins Pipeline Job
 Jenkins Dashboard → New Item
@@ -263,19 +262,15 @@ Save
 GitHub → Repo → Settings → Webhooks
 
 Payload URL:
-
-text
-```
+```bash
 http://<SERVER_IP>:8080/github-webhook/
 ```
 Content type:
-text
-```
+```bash
 application/json
 ```
 Event:
-text
-```
+```bash
 Push
 ```
 Save webhook
