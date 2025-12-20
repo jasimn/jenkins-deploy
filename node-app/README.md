@@ -110,8 +110,136 @@ After installing the plugins, **restart Jenkins**.
 
 ### Project Structure
 sojenkins-deploy
- |-- Jenkinsfile
- `-- node-app
-     |-- server.js
-     `-- package.json
+- Jenkinsfile
+- node-app
+  - server.js
+  - package.json
 
+### node-app/server.js
+
+```javascript
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('Node.js App Deployed via Jenkins CI/CD');
+});
+
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
+});
+```
+### node-app/package.json
+```json
+{
+  "name": "jenkins-node-app",
+  "version": "1.0.0",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
+```
+ ## 6. Application Deployment Directory
+
+Create a directory on the server where the application will be deployed.
+```
+sudo mkdir -p /opt/node-app
+sudo chown -R jenkins:ec2-user /opt/node-app
+sudo chmod -R 775 /opt/node-app
+```
+ ## Explanation (simple)
+chown jenkins:ec2-user →
+Jenkins can deploy files, EC2 user can manage them
+chmod 775 → Owner & group can read/write/execute, others can read/execute
+
+ ## 7. systemd Service (Production Best Practice)
+ ```
+vim /etc/systemd/system/node-app.
+```
+```
+ini
+[Unit]
+Description=Node.js Application Managed by Jenkins
+After=network.target
+
+[Service]
+Type=simple
+User=jenkins
+WorkingDirectory=/opt/node-app
+ExecStart=/usr/bin/node /opt/node-app/server.js
+Restart=on-failure
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.
+```
+Enable service:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable node-app
+```
+## 8. Jenkins Pipeline (Jenkinsfile)
+groovy
+```
+pipeline {
+    agent any
+
+    environment {
+        APP_DIR = "/opt/node-app"
+    }
+
+    stages {
+
+        stage('Fetch Code from Git') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Application') {
+            steps {
+                sh '''
+                  cd node-app
+                  npm install --omit=dev
+                '''
+            }
+        }
+
+        stage('Deploy Application') {
+            steps {
+                sh '''
+                  rm -rf $APP_DIR/*
+                  cp -r node-app/* $APP_DIR/
+                '''
+            }
+        }
+
+        stage('Restart Application') {
+            steps {
+                sh '''
+                  sudo /usr/bin/systemctl restart node-app
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Application deployed successfully"
+        }
+        failure {
+            echo "❌ Deployment failed"
+        }
+    }
+}
+```
+## 9. Allow Jenkins to Restart Service (Important)
+Jenkins cannot enter sudo passwords.
+bash
+sudo visudo
+Add:
+text
+```
+jenkins ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart node-app
+```
