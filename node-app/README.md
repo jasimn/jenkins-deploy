@@ -236,10 +236,46 @@ pipeline {
 ```
 ## 9. Allow Jenkins to Restart Service (Important)
 Jenkins cannot enter sudo passwords.
-bash
+```bash
 sudo visudo
+``
 Add:
 text
 ```
 jenkins ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart node-app
 ```
+10. Create Jenkins Pipeline Job
+Jenkins Dashboard → New Item
+
+- Select Pipeline
+
+- Pipeline Definition: Pipeline script from SCM
+
+- SCM: Git
+
+- Repository URL: GitHub repo URL
+
+- Branch: main
+
+Save
+
+## 11. Configure GitHub Webhook (Auto Trigger)
+GitHub → Repo → Settings → Webhooks
+
+Payload URL:
+
+text
+```
+http://<SERVER_IP>:8080/github-webhook/
+```
+Content type:
+text
+```
+application/json
+```
+Event:
+text
+```
+Push
+```
+Save webhook
