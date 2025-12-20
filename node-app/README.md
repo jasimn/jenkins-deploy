@@ -62,6 +62,7 @@ Jenkins requires Java to run. Install Java 11 or higher.
 update:
 ```bash
 sudo dnf update -y
+```
 Install Java:
 ```bash
 sudo yum install java-11-amazon-corretto -y
