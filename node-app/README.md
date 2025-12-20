@@ -302,3 +302,50 @@ Expected output:
 ```text
 Node.js App Deployed via Jenkins CI/CD
 ```
+## Troubleshooting
+## This makes /tmp use disk instead of RAM.
+
+1️⃣ Stop Jenkins first
+```bash
+sudo systemctl stop jenkins
+```
+2️⃣ Disable systemd tmp.mount
+```bash
+sudo systemctl disable tmp.mount
+sudo systemctl stop tmp.mount
+```
+3️⃣ Unmount /tmp
+```bash
+sudo umount /tmp
+```
+If busy:
+```bash
+sudo umount -l /tmp
+```
+4️⃣ Recreate /tmp as normal disk directory
+```bash
+sudo mkdir -p /tmp
+sudo chmod 1777 /tmp
+```
+ 1777 is mandatory for /tmp
+
+5️⃣ Prevent tmpfs mounting at boot
+
+Create override file:
+```bash
+sudo systemctl mask tmp.mount
+```
+6️⃣ Reboot (important)
+```
+sudo reboot
+```
+7️⃣ Verify after reboot
+```bash
+df -h /tmp
+```
+Expected:
+
+/dev/xvda1   8G   3G   5G   40% /tmp
+
+
+✅ Now /tmp uses disk space, not RAM
