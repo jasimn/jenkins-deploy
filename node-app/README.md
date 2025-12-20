@@ -241,7 +241,8 @@ sudo visudo
 ```
 Add:
 
-```jenkins ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart node-app
+```bash
+jenkins ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart node-app
 ```
 10. Create Jenkins Pipeline Job
 Jenkins Dashboard → New Item
@@ -274,3 +275,15 @@ Event:
 Push
 ```
 Save webhook
+## Verification
+```bash
+curl http://localhost:3000
+```
+Browser:
+```text
+http://<SERVER_IP>:3000
+```
+Expected output:
+```text
+Node.js App Deployed via Jenkins CI/CD
+```
