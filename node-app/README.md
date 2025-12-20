@@ -59,21 +59,34 @@ Application Server (EC2)
 Jenkins requires Java to run. Install Java 11 or higher.
 
 #### Amazon Linux / RHEL
-
+update:
 ```bash
-sudo yum update
+sudo dnf update -y
+Install Java:
+```bash
 sudo yum install java-11-amazon-corretto -y
 ```
 ## 3.2 Install Jenkins
-
-Add the Jenkins repository and import the GPG key:
-
+Verify:
+```bash
+java -version
+```
+Expected:
+```bash
+openjdk version "17"
+```
+3 Add Jenkins Repository
 ```bash
 sudo wget -O /etc/yum.repos.d/jenkins.repo \
 https://pkg.jenkins.io/redhat-stable/jenkins.repo
-
+```
+Import Jenkins GPG key:
+```bash
 sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
-sudo yum install jenkins -y
+```
+4 Install Jenkins
+```bash
+sudo dnf install -y jenkins
 ```
 ## 3.3 Start Jenkins
 ```bash sudo systemctl enable jenkins
