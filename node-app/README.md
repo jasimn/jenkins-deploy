@@ -109,8 +109,9 @@ After installing the plugins, **restart Jenkins**.
 ## 5. Application Code (Example)
 
 ### Project Structure
-jenkins-deploy/
-├── Jenkinsfile
-└── node-app/
-    ├── server.js
-    └── package.jso
+sojenkins-deploy
+ |-- Jenkinsfile
+ `-- node-app
+     |-- server.js
+     `-- package.json
+
