@@ -7,6 +7,12 @@ pipeline {
 
     stages {
 
+        stage('Clean Workspace') {
+            steps {
+                deleteDir()
+            }
+        }
+
         stage('Checkout Code') {
             steps {
                 checkout scm
@@ -16,8 +22,8 @@ pipeline {
         stage('Build Application') {
             steps {
                 sh '''
-                  cd node-app
-                  npm install --production
+                    cd node-app
+                    npm install --omit=dev
                 '''
             }
         }
@@ -25,8 +31,18 @@ pipeline {
         stage('Deploy Application') {
             steps {
                 sh '''
-                  rm -rf $APP_DIR/*
-                  cp -r node-app/* $APP_DIR/
+                    sudo mkdir -p $APP_DIR
+                    sudo rm -rf $APP_DIR/*
+                    sudo cp -r node-app/* $APP_DIR/
+                    sudo chown -R jenkins:jenkins $APP_DIR
+                '''
+            }
+        }
+
+        stage('Start Application') {
+            steps {
+                sh '''
+                    sudo systemctl restart node-app
                 '''
             }
         }
@@ -34,7 +50,7 @@ pipeline {
 
     post {
         success {
-            echo "✅ Application deployed via systemd (production-ready)"
+            echo "✅ Application deployed and started via systemd (production-ready)"
         }
         failure {
             echo "❌ Deployment failed"
