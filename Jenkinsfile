@@ -39,7 +39,7 @@ pipeline {
             }
         }
 
-        stage('Start Application') {
+        stage('Restart Service') {
             steps {
                 sh '''
                     sudo systemctl restart node-app
