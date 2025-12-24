@@ -30,14 +30,6 @@ pipeline {
                 '''
             }
         }
-
-        stage('Restart Service') {
-            steps {
-                sh '''
-                   sudo /usr/bin/systemctl restart node-app
-                '''
-            }
-        }
     }
 
     post {
